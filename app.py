@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from datetime import datetime, timezone, timedelta
 import urllib.parse
 import base64
@@ -59,10 +60,9 @@ st.markdown("""
     --text-muted: #94A3B8;
 }
 
-/* Eliminar paddings excesivos de Streamlit en móvil */
 .block-container {
     padding-top: 1rem !important;
-    padding-bottom: 5.5rem !important; /* Espacio para la barra flotante inferior */
+    padding-bottom: 5.5rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     max-width: 1100px !important;
@@ -82,23 +82,22 @@ h1, h2, h3, .oswald {
     text-transform: uppercase;
 }
 
-/* HERO SECTION ADAPTABLE */
+/* HERO SECTION */
 .hero-card {
     background: linear-gradient(160deg, #161B26 0%, #1F0B11 55%, #0D1017 100%);
     border: 1px solid rgba(200, 16, 46, 0.5);
-    border-radius: 20px;
-    padding: 1.8rem;
-    margin-bottom: 1.2rem;
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.65);
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    padding: 1.6rem 1.6rem 1rem 1.6rem;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
 }
 
 .brand-logo, .brand-logo-svg {
-    width: 135px;
-    height: 135px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     border: 3px solid var(--crimson);
     background: #FFFFFF;
@@ -127,7 +126,7 @@ h1, h2, h3, .oswald {
 }
 
 .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.35rem;
     line-height: 1.08;
     margin: 0;
     color: #FFFFFF;
@@ -138,50 +137,12 @@ h1, h2, h3, .oswald {
 .hero-slogan {
     color: var(--gold);
     font-weight: 700;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     letter-spacing: 1.5px;
     margin-top: 6px;
 }
 
-/* CONTADOR COMPACTO */
-.countdown-box {
-    background: rgba(9, 11, 15, 0.75);
-    border: 1px solid rgba(245, 197, 24, 0.35);
-    border-radius: 14px;
-    padding: 12px;
-    min-width: 250px;
-}
-
-.countdown-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.c-item {
-    background: #131722;
-    border-radius: 8px;
-    padding: 8px 4px;
-    text-align: center;
-    border: 1px solid rgba(255,255,255,0.06);
-}
-
-.c-num {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.55rem;
-    color: var(--gold);
-    line-height: 1;
-}
-
-.c-lbl {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-top: 3px;
-}
-
-/* NAVEGACIÓN TÁCTIL TIPO APP (RADIO BUTTONS ESTILIZADOS) */
+/* NAVEGACIÓN TÁCTIL TIPO APP */
 div[data-testid="stRadio"] > div {
     display: flex;
     flex-direction: row;
@@ -191,6 +152,7 @@ div[data-testid="stRadio"] > div {
     padding: 6px;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.08);
+    margin-top: 0.6rem;
 }
 
 div[data-testid="stRadio"] label {
@@ -202,7 +164,6 @@ div[data-testid="stRadio"] label {
     padding: 10px 6px !important;
     margin: 0 !important;
     cursor: pointer;
-    border: 1px solid transparent;
     transition: all 0.2s;
 }
 
@@ -214,7 +175,7 @@ div[data-testid="stRadio"] label[data-checked="true"] {
 }
 
 div[data-testid="stRadio"] label > div:first-child {
-    display: none !important; /* Oculta el circulito del radio button */
+    display: none !important;
 }
 
 /* TARJETAS DE CONTENIDO */
@@ -268,7 +229,7 @@ div[data-testid="stRadio"] label > div:first-child {
     border-color: rgba(245, 197, 24, 0.45);
 }
 
-/* BOTÓN FLOTANTE INFERIOR PARA CELULAR */
+/* BOTÓN FLOTANTE INFERIOR */
 .sticky-bottom-bar {
     position: fixed;
     bottom: 0;
@@ -303,29 +264,23 @@ div[data-testid="stRadio"] label > div:first-child {
     letter-spacing: 0.5px;
 }
 
-/* ==========================================================================
-   REGLAS EXCLUSIVAS PARA PANTALLAS DE TELÉFONO CELULAR (< 768px)
-   ========================================================================== */
+/* REGLAS EXCLUSIVAS MÓVIL */
 @media (max-width: 768px) {
     .hero-card {
         flex-direction: column;
         text-align: center;
-        padding: 1.3rem 1rem;
-        gap: 14px;
+        padding: 1.3rem 1rem 0.8rem 1rem;
+        gap: 12px;
     }
     .brand-logo, .brand-logo-svg {
-        width: 105px;
-        height: 105px;
+        width: 100px;
+        height: 100px;
     }
     .hero-title {
-        font-size: 1.85rem;
+        font-size: 1.8rem;
     }
     .hero-slogan {
-        font-size: 0.8rem;
-    }
-    .countdown-box {
-        width: 100%;
-        min-width: unset;
+        font-size: 0.78rem;
     }
     div[data-testid="stRadio"] label p {
         font-size: 0.78rem !important;
@@ -400,220 +355,3 @@ TORNEOS_2027 = [
         "titulo": "Torneo Leyendas vs. Prodigios",
         "modalidad": "Match Especial 10 vs. 10",
         "detalle": "Duelo estelar de 10 maestros contra 10 jóvenes talentos.",
-        "icono": "⚔️"
-    }
-]
-
-def generar_ics(titulo, fecha_str, descripcion):
-    return f"""BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:{fecha_str}
-SUMMARY:{titulo} - Escuela Kendry Morón
-DESCRIPTION:{descripcion}
-LOCATION:Escuela Nacional de Talento Kendry Morón, Santo Domingo
-END:VEVENT
-END:VCALENDAR"""
-
-# -----------------------------------------------------------------------------
-# CUENTA REGRESIVA (HORA RD UTC-4)
-# -----------------------------------------------------------------------------
-tz_rd = timezone(timedelta(hours=-4))
-ahora = datetime.now(tz_rd)
-objetivo = datetime(2026, 11, 27, 9, 0, 0, tzinfo=tz_rd)
-diff = objetivo - ahora
-
-if diff.total_seconds() > 0:
-    dias = diff.days
-    horas, rem = divmod(diff.seconds, 3600)
-    minutos, segundos = divmod(rem, 60)
-else:
-    dias, horas, minutos, segundos = 0, 0, 0, 0
-
-# -----------------------------------------------------------------------------
-# HERO BANNER RESPONSIVO
-# -----------------------------------------------------------------------------
-st.markdown(f"""
-<div class="hero-card">
-    {get_logo_html()}
-    <div style="flex: 1;">
-        <div class="hero-badge">♟️ Santo Domingo • Válido Rating FIDE</div>
-        <h1 class="hero-title">ESCUELA NACIONAL DE TALENTO <span>KENDRY MORÓN</span></h1>
-        <div class="hero-slogan">★ FORMAMOS TALENTO, INSPIRAMOS CAMPEONES ★</div>
-    </div>
-    <div class="countdown-box">
-        <div style="font-size: 0.72rem; color: #F5C518; font-weight: 800; text-align: center; letter-spacing: 0.8px;">
-            ⏳ INICIO TORNEO NACIONAL (27 NOV)
-        </div>
-        <div class="countdown-grid">
-            <div class="c-item"><div class="c-num">{dias}</div><div class="c-lbl">Días</div></div>
-            <div class="c-item"><div class="c-num">{horas}</div><div class="c-lbl">Hrs</div></div>
-            <div class="c-item"><div class="c-num">{minutos}</div><div class="c-lbl">Min</div></div>
-            <div class="c-item"><div class="c-num">{segundos}</div><div class="c-lbl">Seg</div></div>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# -----------------------------------------------------------------------------
-# BARRA DE NAVEGACIÓN TÁCTIL (OPTIMIZADA PARA PULGAR EN CELULAR)
-# -----------------------------------------------------------------------------
-seccion = st.radio(
-    "Navegación",
-    ["🏆 Nacional Nov", "📅 Calendario 2027", "📝 Inscribirse"],
-    horizontal=True,
-    label_visibility="collapsed"
-)
-
-# =============================================================================
-# VISTA 1: TORNEO NACIONAL POR CATEGORÍAS (27 AL 29 NOV)
-# =============================================================================
-if seccion == "🏆 Nacional Nov":
-    st.markdown("""
-    <div class="mobile-card" style="border-left: 5px solid #F5C518;">
-        <span style="background:#F5C518; color:#090B0F; font-weight:800; padding:3px 10px; border-radius:6px; font-size:0.75rem;">
-            27 AL 29 DE NOVIEMBRE • FIDE
-        </span>
-        <h2 style="font-size: 1.75rem; margin: 8px 0 6px 0; color: #FFFFFF;">
-            TORNEO NACIONAL POR CATEGORÍAS
-        </h2>
-        <div style="color: #CBD5E1; font-size: 0.9rem; line-height: 1.5;">
-            📍 <strong>Sede:</strong> Escuela Nacional de Talento Kendry Morón, Santo Domingo.<br>
-            ⏱️ <strong>Ritmo:</strong> 1 hora 30 min + 30 seg de incremento.<br>
-            ♟️ <strong>Sistema:</strong> Suizo a 5 Rondas.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2, gap="medium")
-
-    with col1:
-        st.markdown("#### 🎯 Categorías Juveniles")
-        st.markdown("""
-        <div class="cat-row"><div class="cat-name">♟️ SUB <span>17</span></div><div class="cat-tag">ABSOLUTO Y FEMENINO</div></div>
-        <div class="cat-row"><div class="cat-name">♞ SUB <span>15</span></div><div class="cat-tag">ABSOLUTO</div></div>
-        <div class="cat-row"><div class="cat-name">♝ SUB <span>13</span></div><div class="cat-tag">ABSOLUTO</div></div>
-        <div class="cat-row"><div class="cat-name">♜ SUB <span>11</span></div><div class="cat-tag">ABSOLUTO</div></div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("#### 🏅 Premiación Oficial")
-        st.markdown("""
-        <div class="prize-item prize-gold">
-            <div style="font-weight: 800; color: #F5C518; font-size: 1rem;">🥇 1ER LUGAR: Trofeo + Viaje</div>
-            <div style="color: #E2E8F0; font-size: 0.85rem; margin-top: 3px;">
-                Boletos aéreos ida y vuelta a los <strong>XXIII Juegos Centroamericanos y del Caribe de la Juventud 2027</strong>.
-            </div>
-        </div>
-        <div class="prize-item">
-            <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥈 2DO LUGAR: Medalla + Tablero Staunton</div>
-            <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas Staunton.</div>
-        </div>
-        <div class="prize-item">
-            <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥉 3ER LUGAR: Medalla + Tablero DGT</div>
-            <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas DGT.</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.info("🎓 **Entrenamiento continuo** incluido para todos los primeros lugares con miras al Centroamericano.")
-
-# =============================================================================
-# VISTA 2: CALENDARIO DE TORNEOS 2027
-# =============================================================================
-elif seccion == "📅 Calendario 2027":
-    st.markdown("#### 📅 Temporada Oficial 2027 (Enero – Junio)")
-    
-    mes_filtro = st.selectbox(
-        "Filtrar por mes:",
-        ["Todos los meses", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO"],
-        label_visibility="collapsed"
-    )
-
-    filtrados = [t for t in TORNEOS_2027 if mes_filtro == "Todos los meses" or t["mes"] == mes_filtro]
-
-    for idx, ev in enumerate(filtrados):
-        st.markdown(f"""
-        <div class="mobile-card" style="border-left: 4px solid #C8102E;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="background:#C8102E; color:#FFF; font-weight:800; font-size:0.75rem; padding:3px 10px; border-radius:6px;">
-                    {ev['mes']} 2027
-                </span>
-                <span style="font-size: 1.3rem;">{ev['icono']}</span>
-            </div>
-            <div style="color: #F5C518; font-weight: 700; font-size: 0.88rem; margin-top: 8px;">
-                🗓️ {ev['fechas']}
-            </div>
-            <div style="font-family: 'Oswald', sans-serif; font-size: 1.35rem; color: #FFFFFF; margin: 2px 0;">
-                {ev['titulo']}
-            </div>
-            <div style="color: #FF6B81; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">
-                {ev['modalidad']}
-            </div>
-            <div style="color: #94A3B8; font-size: 0.85rem; margin-top: 4px;">
-                {ev['detalle']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.download_button(
-            label=f"➕ Guardar '{ev['titulo']}' en mi Calendario",
-            data=generar_ics(ev["titulo"], ev["fecha_ics"], ev["detalle"]),
-            file_name=f"torneo_{ev['mes'].lower()}_{idx}.ics",
-            mime="text/calendar",
-            key=f"btn_ics_{idx}",
-            use_container_width=True
-        )
-        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
-
-# =============================================================================
-# VISTA 3: FORMULARIO DE INSCRIPCIÓN RÁPIDA
-# =============================================================================
-elif seccion == "📝 Inscribirse":
-    st.markdown("#### 📝 Pre-Inscripción Rápida desde el Celular")
-    st.caption("Completa los datos y envíalos en un toque al WhatsApp oficial del torneo.")
-
-    with st.form("form_movil"):
-        nombre = st.text_input("Nombre Completo del Jugador *", placeholder="Ej. Ángel Sebastián Lara")
-        torneo = st.selectbox(
-            "Torneo *",
-            ["Torneo Nacional por Categorías (27-29 Nov)"] + [f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027]
-        )
-        categoria = st.selectbox(
-            "Categoría *",
-            ["Sub-17 Absoluto", "Sub-17 Femenino", "Sub-15 Absoluto", "Sub-13 Absoluto", "Sub-11 Absoluto", "Abierto / Libre"]
-        )
-        telefono = st.text_input("WhatsApp de Contacto *", placeholder="Ej. 809-555-0199")
-        id_fide = st.text_input("ID FIDE (Opcional)", placeholder="Si no tiene, dejar en blanco")
-
-        submit = st.form_submit_button("✅ PREPARAR INSCRIPCIÓN", use_container_width=True)
-
-    if submit:
-        if not nombre or not telefono:
-            st.error("⚠️ Escribe el nombre del jugador y un número de contacto.")
-        else:
-            texto_wa = (
-                f"*INSCRIPCIÓN ESCUELA KENDRY MORÓN*%0A"
-                f"• *Jugador:* {urllib.parse.quote(nombre)}%0A"
-                f"• *Torneo:* {urllib.parse.quote(torneo)}%0A"
-                f"• *Categoría:* {urllib.parse.quote(categoria)}%0A"
-                f"• *ID FIDE:* {urllib.parse.quote(id_fide if id_fide else 'N/A')}%0A"
-                f"• *Tel:* {urllib.parse.quote(telefono)}"
-            )
-            st.success("✅ ¡Listo! Pulsa el botón verde/rojo abajo para enviar tu ficha:")
-            st.link_button(
-                "📲 ENVIAR POR WHATSAPP AL CM MICHEL DE JESÚS",
-                f"https://wa.me/18297732231?text={texto_wa}",
-                use_container_width=True
-            )
-
-# -----------------------------------------------------------------------------
-# BARRA FLOTANTE INFERIOR PERSISTENTE (SIEMPRE ACCESIBLE CON EL PULGAR)
-# -----------------------------------------------------------------------------
-msg_directo = urllib.parse.quote("Hola CM Michel de Jesús, quiero información e inscribirme en los torneos de la Escuela Kendry Morón.")
-st.markdown(f"""
-<div class="sticky-bottom-bar">
-    <a href="https://wa.me/18297732231?text={msg_directo}" target="_blank" class="sticky-wa-btn">
-        📲 INSCRIPCIÓN DIRECTA • CM MICHEL (829.773.2231)
-    </a>
-</div>
-""", unsafe_allow_html=True)
