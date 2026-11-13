@@ -1,6 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from datetime import datetime, timezone, timedelta
 import urllib.parse
 import base64
 import os
@@ -15,8 +14,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+if "vista_actual" not in st.session_state:
+    st.session_state.vista_actual = "nacional"
+
 # -----------------------------------------------------------------------------
-# LOGO INSTITUCIONAL (CARGA LOCAL O VECTORIAL DE ALTA NITIDEZ)
+# LOGO INSTITUCIONAL
 # -----------------------------------------------------------------------------
 def get_logo_html():
     if os.path.exists("logo.png"):
@@ -45,11 +47,11 @@ def get_logo_html():
     """
 
 # -----------------------------------------------------------------------------
-# CSS RESPONSIVO (DISEÑO APP NATIVA PARA CELULAR Y DESKTOP)
+# CSS RESPONSIVO (NAVEGACIÓN DE ALTO CONTRASTE + DISEÑO MÓVIL)
 # -----------------------------------------------------------------------------
 CSS_ESTILOS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
     --bg-dark: #090B0F;
@@ -82,6 +84,7 @@ h1, h2, h3, .oswald {
     text-transform: uppercase;
 }
 
+/* HERO SECTION */
 .hero-card {
     background: linear-gradient(160deg, #161B26 0%, #1F0B11 55%, #0D1017 100%);
     border: 1px solid rgba(200, 16, 46, 0.5);
@@ -141,41 +144,58 @@ h1, h2, h3, .oswald {
     margin-top: 6px;
 }
 
-div[data-testid="stRadio"] > div {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    width: 100%;
-    background: #131722;
-    padding: 6px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.08);
-    margin-top: 0.6rem;
-}
-
-div[data-testid="stRadio"] label {
-    flex: 1;
+/* ==========================================================================
+   BARRA DE NAVEGACIÓN PRINCIPAL (ALTO CONTRASTE Y PROTAGONISMO)
+   ========================================================================== */
+.nav-header-label {
     text-align: center;
-    justify-content: center;
-    background: transparent;
-    border-radius: 10px;
-    padding: 10px 6px !important;
-    margin: 0 !important;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #F5C518;
+    text-transform: uppercase;
+    margin: 0.4rem 0 0.5rem 0;
 }
 
-div[data-testid="stRadio"] label[data-checked="true"] {
-    background: var(--crimson) !important;
+/* Botón Inactivo (Fondo claro/contrastado, borde dorado/blanco, texto 100% legible) */
+div.stButton > button[kind="secondary"] {
+    background: #1A202E !important;
     color: #FFFFFF !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 14px rgba(200, 16, 46, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius: 14px !important;
+    padding: 0.85rem 0.5rem !important;
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    transition: all 0.2s ease !important;
 }
 
-div[data-testid="stRadio"] label > div:first-child {
-    display: none !important;
+div.stButton > button[kind="secondary"]:hover {
+    border-color: #F5C518 !important;
+    background: #232B3E !important;
+    color: #F5C518 !important;
+    transform: translateY(-2px);
 }
 
+/* Botón Activo (Rojo Carmesí Intenso con borde Dorado brillante) */
+div.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #E01133 0%, #A30B24 100%) !important;
+    color: #FFFFFF !important;
+    border: 2px solid #F5C518 !important;
+    border-radius: 14px !important;
+    padding: 0.85rem 0.5rem !important;
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 0 22px rgba(200, 16, 46, 0.65) !important;
+}
+
+/* TARJETAS DE CONTENIDO */
 .mobile-card {
     background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.08);
@@ -277,9 +297,10 @@ div[data-testid="stRadio"] label > div:first-child {
     .hero-slogan {
         font-size: 0.78rem;
     }
-    div[data-testid="stRadio"] label p {
-        font-size: 0.78rem !important;
-        line-height: 1.2 !important;
+    div.stButton > button[kind="secondary"],
+    div.stButton > button[kind="primary"] {
+        font-size: 1.05rem !important;
+        padding: 0.8rem 0.6rem !important;
     }
 }
 </style>
@@ -370,7 +391,7 @@ def generar_ics(titulo, fecha_str, descripcion):
     )
 
 # -----------------------------------------------------------------------------
-# HERO BANNER + RELOJ EN VIVO (JAVASCRIPT EN TIEMPO REAL)
+# HERO BANNER + RELOJ EN VIVO
 # -----------------------------------------------------------------------------
 logo_actual = get_logo_html()
 
@@ -437,9 +458,7 @@ RELOJ_HTML = """
         line-height: 1;
         font-variant-numeric: tabular-nums;
     }
-    .num.sec {
-        color: #FF4D6D;
-    }
+    .num.sec { color: #FF4D6D; }
     .lbl {
         font-size: 0.65rem;
         color: #94A3B8;
@@ -497,19 +516,45 @@ RELOJ_HTML = """
 components.html(RELOJ_HTML, height=132)
 
 # -----------------------------------------------------------------------------
-# BARRA DE NAVEGACIÓN TÁCTIL
+# BARRA DE NAVEGACIÓN PRINCIPAL DE ALTO IMPACTO
 # -----------------------------------------------------------------------------
-seccion = st.radio(
-    "Navegación",
-    ["🏆 Nacional Nov", "📅 Calendario 2027", "📝 Inscribirse"],
-    horizontal=True,
-    label_visibility="collapsed"
-)
+st.markdown('<div class="nav-header-label">👇 Selecciona una sección 👇</div>', unsafe_allow_html=True)
+
+nav1, nav2, nav3 = st.columns(3, gap="small")
+
+with nav1:
+    if st.button(
+        "🏆 TORNEO NACIONAL (27 NOV)",
+        type="primary" if st.session_state.vista_actual == "nacional" else "secondary",
+        use_container_width=True
+    ):
+        st.session_state.vista_actual = "nacional"
+        st.rerun()
+
+with nav2:
+    if st.button(
+        "📅 CALENDARIO 2027",
+        type="primary" if st.session_state.vista_actual == "calendario" else "secondary",
+        use_container_width=True
+    ):
+        st.session_state.vista_actual = "calendario"
+        st.rerun()
+
+with nav3:
+    if st.button(
+        "📝 INSCRIBIRSE AHORA",
+        type="primary" if st.session_state.vista_actual == "inscripcion" else "secondary",
+        use_container_width=True
+    ):
+        st.session_state.vista_actual = "inscripcion"
+        st.rerun()
+
+st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 # =============================================================================
 # VISTA 1: TORNEO NACIONAL POR CATEGORÍAS (27 AL 29 NOV)
 # =============================================================================
-if seccion == "🏆 Nacional Nov":
+if st.session_state.vista_actual == "nacional":
     st.markdown(
         """
         <div class="mobile-card" style="border-left: 5px solid #F5C518;">
@@ -538,139 +583,3 @@ if seccion == "🏆 Nacional Nov":
             <div class="cat-row"><div class="cat-name">♟️ SUB <span>17</span></div><div class="cat-tag">ABSOLUTO Y FEMENINO</div></div>
             <div class="cat-row"><div class="cat-name">♞ SUB <span>15</span></div><div class="cat-tag">ABSOLUTO</div></div>
             <div class="cat-row"><div class="cat-name">♝ SUB <span>13</span></div><div class="cat-tag">ABSOLUTO</div></div>
-            <div class="cat-row"><div class="cat-name">♜ SUB <span>11</span></div><div class="cat-tag">ABSOLUTO</div></div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col2:
-        st.markdown("#### 🏅 Premiación Oficial")
-        st.markdown(
-            """
-            <div class="prize-item prize-gold">
-                <div style="font-weight: 800; color: #F5C518; font-size: 1rem;">🥇 1ER LUGAR: Trofeo + Viaje</div>
-                <div style="color: #E2E8F0; font-size: 0.85rem; margin-top: 3px;">
-                    Boletos aéreos ida y vuelta a los <strong>XXIII Juegos Centroamericanos y del Caribe de la Juventud 2027</strong>.
-                </div>
-            </div>
-            <div class="prize-item">
-                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥈 2DO LUGAR: Medalla + Tablero Staunton</div>
-                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas Staunton.</div>
-            </div>
-            <div class="prize-item">
-                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥉 3ER LUGAR: Medalla + Tablero DGT</div>
-                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas DGT.</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.info("🎓 **Entrenamiento continuo** incluido para todos los primeros lugares con miras al Centroamericano.")
-
-# =============================================================================
-# VISTA 2: CALENDARIO DE TORNEOS 2027
-# =============================================================================
-elif seccion == "📅 Calendario 2027":
-    st.markdown("#### 📅 Temporada Oficial 2027 (Enero – Junio)")
-    
-    mes_filtro = st.selectbox(
-        "Filtrar por mes:",
-        ["Todos los meses", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO"],
-        label_visibility="collapsed"
-    )
-
-    filtrados = [t for t in TORNEOS_2027 if mes_filtro == "Todos los meses" or t["mes"] == mes_filtro]
-
-    for idx, ev in enumerate(filtrados):
-        st.markdown(
-            f"""
-            <div class="mobile-card" style="border-left: 4px solid #C8102E;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="background:#C8102E; color:#FFF; font-weight:800; font-size:0.75rem; padding:3px 10px; border-radius:6px;">
-                        {ev['mes']} 2027
-                    </span>
-                    <span style="font-size: 1.3rem;">{ev['icono']}</span>
-                </div>
-                <div style="color: #F5C518; font-weight: 700; font-size: 0.88rem; margin-top: 8px;">
-                    🗓️ {ev['fechas']}
-                </div>
-                <div style="font-family: 'Oswald', sans-serif; font-size: 1.35rem; color: #FFFFFF; margin: 2px 0;">
-                    {ev['titulo']}
-                </div>
-                <div style="color: #FF6B81; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">
-                    {ev['modalidad']}
-                </div>
-                <div style="color: #94A3B8; font-size: 0.85rem; margin-top: 4px;">
-                    {ev['detalle']}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        st.download_button(
-            label=f"➕ Guardar '{ev['titulo']}' en mi Calendario",
-            data=generar_ics(ev["titulo"], ev["fecha_ics"], ev["detalle"]),
-            file_name=f"torneo_{ev['mes'].lower()}_{idx}.ics",
-            mime="text/calendar",
-            key=f"btn_ics_{idx}",
-            use_container_width=True
-        )
-        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
-
-# =============================================================================
-# VISTA 3: FORMULARIO DE INSCRIPCIÓN RÁPIDA
-# =============================================================================
-elif seccion == "📝 Inscribirse":
-    st.markdown("#### 📝 Pre-Inscripción Rápida desde el Celular")
-    st.caption("Completa los datos y envíalos en un toque al WhatsApp oficial del torneo.")
-
-    with st.form("form_movil"):
-        nombre = st.text_input("Nombre Completo del Jugador *", placeholder="Ej. Ángel Sebastián Lara")
-        lista_torneos = ["Torneo Nacional por Categorías (27-29 Nov)"] + [
-            f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027
-        ]
-        torneo = st.selectbox("Torneo *", lista_torneos)
-        categoria = st.selectbox(
-            "Categoría *",
-            ["Sub-17 Absoluto", "Sub-17 Femenino", "Sub-15 Absoluto", "Sub-13 Absoluto", "Sub-11 Absoluto", "Abierto / Libre"]
-        )
-        telefono = st.text_input("WhatsApp de Contacto *", placeholder="Ej. 809-555-0199")
-        id_fide = st.text_input("ID FIDE (Opcional)", placeholder="Si no tiene, dejar en blanco")
-
-        submit = st.form_submit_button("✅ PREPARAR INSCRIPCIÓN", use_container_width=True)
-
-    if submit:
-        if not nombre or not telefono:
-            st.error("⚠️ Escribe el nombre del jugador y un número de contacto.")
-        else:
-            fide_texto = id_fide if id_fide else "N/A"
-            texto_wa = (
-                f"*INSCRIPCIÓN ESCUELA KENDRY MORÓN*%0A"
-                f"• *Jugador:* {urllib.parse.quote(nombre)}%0A"
-                f"• *Torneo:* {urllib.parse.quote(torneo)}%0A"
-                f"• *Categoría:* {urllib.parse.quote(categoria)}%0A"
-                f"• *ID FIDE:* {urllib.parse.quote(fide_texto)}%0A"
-                f"• *Tel:* {urllib.parse.quote(telefono)}"
-            )
-            st.success("✅ ¡Listo! Pulsa el botón abajo para enviar tu ficha:")
-            st.link_button(
-                "📲 ENVIAR POR WHATSAPP AL CM MICHEL DE JESÚS",
-                f"https://wa.me/18297732231?text={texto_wa}",
-                use_container_width=True
-            )
-
-# -----------------------------------------------------------------------------
-# BARRA FLOTANTE INFERIOR PERSISTENTE
-# -----------------------------------------------------------------------------
-msg_directo = urllib.parse.quote("Hola CM Michel de Jesús, quiero información e inscribirme en los torneos de la Escuela Kendry Morón.")
-st.markdown(
-    f"""
-    <div class="sticky-bottom-bar">
-        <a href="https://wa.me/18297732231?text={msg_directo}" target="_blank" class="sticky-wa-btn">
-            📲 INSCRIPCIÓN DIRECTA • CM MICHEL (829.773.2231)
-        </a>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
