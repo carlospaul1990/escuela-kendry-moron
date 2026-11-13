@@ -47,7 +47,7 @@ def get_logo_html():
 # -----------------------------------------------------------------------------
 # CSS RESPONSIVO (DISEÑO APP NATIVA PARA CELULAR Y DESKTOP)
 # -----------------------------------------------------------------------------
-st.markdown("""
+CSS_ESTILOS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -82,7 +82,6 @@ h1, h2, h3, .oswald {
     text-transform: uppercase;
 }
 
-/* HERO SECTION */
 .hero-card {
     background: linear-gradient(160deg, #161B26 0%, #1F0B11 55%, #0D1017 100%);
     border: 1px solid rgba(200, 16, 46, 0.5);
@@ -142,7 +141,6 @@ h1, h2, h3, .oswald {
     margin-top: 6px;
 }
 
-/* NAVEGACIÓN TÁCTIL TIPO APP */
 div[data-testid="stRadio"] > div {
     display: flex;
     flex-direction: row;
@@ -178,7 +176,6 @@ div[data-testid="stRadio"] label > div:first-child {
     display: none !important;
 }
 
-/* TARJETAS DE CONTENIDO */
 .mobile-card {
     background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.08);
@@ -229,7 +226,6 @@ div[data-testid="stRadio"] label > div:first-child {
     border-color: rgba(245, 197, 24, 0.45);
 }
 
-/* BOTÓN FLOTANTE INFERIOR */
 .sticky-bottom-bar {
     position: fixed;
     bottom: 0;
@@ -264,7 +260,6 @@ div[data-testid="stRadio"] label > div:first-child {
     letter-spacing: 0.5px;
 }
 
-/* REGLAS EXCLUSIVAS MÓVIL */
 @media (max-width: 768px) {
     .hero-card {
         flex-direction: column;
@@ -288,7 +283,9 @@ div[data-testid="stRadio"] label > div:first-child {
     }
 }
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(CSS_ESTILOS, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # DATOS DE TORNEOS 2027
@@ -355,3 +352,325 @@ TORNEOS_2027 = [
         "titulo": "Torneo Leyendas vs. Prodigios",
         "modalidad": "Match Especial 10 vs. 10",
         "detalle": "Duelo estelar de 10 maestros contra 10 jóvenes talentos.",
+        "icono": "⚔️"
+    }
+]
+
+def generar_ics(titulo, fecha_str, descripcion):
+    return (
+        "BEGIN:VCALENDAR\n"
+        "VERSION:2.0\n"
+        "BEGIN:VEVENT\n"
+        f"DTSTART;VALUE=DATE:{fecha_str}\n"
+        f"SUMMARY:{titulo} - Escuela Kendry Morón\n"
+        f"DESCRIPTION:{descripcion}\n"
+        "LOCATION:Escuela Nacional de Talento Kendry Morón, Santo Domingo\n"
+        "END:VEVENT\n"
+        "END:VCALENDAR"
+    )
+
+# -----------------------------------------------------------------------------
+# HERO BANNER + RELOJ EN VIVO (JAVASCRIPT EN TIEMPO REAL)
+# -----------------------------------------------------------------------------
+logo_actual = get_logo_html()
+
+st.markdown(
+    f"""
+    <div class="hero-card">
+        {logo_actual}
+        <div style="flex: 1;">
+            <div class="hero-badge">♟️ Santo Domingo • Válido Rating FIDE</div>
+            <h1 class="hero-title">ESCUELA NACIONAL DE TALENTO <span>KENDRY MORÓN</span></h1>
+            <div class="hero-slogan">★ FORMAMOS TALENTO, INSPIRAMOS CAMPEONES ★</div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+RELOJ_HTML = """
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: transparent;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .timer-wrapper {
+        background: linear-gradient(180deg, #131722 0%, #0D1017 100%);
+        border: 1px solid rgba(200, 16, 46, 0.5);
+        border-top: 1px solid rgba(245, 197, 24, 0.25);
+        border-radius: 0 0 20px 20px;
+        padding: 14px 16px 16px 16px;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+    }
+    .timer-header {
+        font-size: 0.74rem;
+        color: #F5C518;
+        font-weight: 800;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 540px;
+        margin: 0 auto;
+    }
+    .box {
+        background: #090B0F;
+        border: 1px solid rgba(245, 197, 24, 0.35);
+        border-radius: 12px;
+        padding: 10px 4px;
+        text-align: center;
+    }
+    .num {
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.85rem;
+        color: #F5C518;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+    .num.sec {
+        color: #FF4D6D;
+    }
+    .lbl {
+        font-size: 0.65rem;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 4px;
+        font-weight: 700;
+    }
+</style>
+</head>
+<body>
+    <div class="timer-wrapper">
+        <div class="timer-header">⏳ Cuenta Regresiva • Torneo Nacional Juvenil (27 Nov, 9:00 AM)</div>
+        <div class="grid">
+            <div class="box"><div class="num" id="d">--</div><div class="lbl">Días</div></div>
+            <div class="box"><div class="num" id="h">--</div><div class="lbl">Horas</div></div>
+            <div class="box"><div class="num" id="m">--</div><div class="lbl">Min</div></div>
+            <div class="box"><div class="num sec" id="s">--</div><div class="lbl">Seg</div></div>
+        </div>
+    </div>
+
+    <script>
+        const targetDate = new Date("2026-11-27T09:00:00-04:00").getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                document.getElementById("d").innerText = "00";
+                document.getElementById("h").innerText = "00";
+                document.getElementById("m").innerText = "00";
+                document.getElementById("s").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("d").innerText = String(days).padStart(2, '0');
+            document.getElementById("h").innerText = String(hours).padStart(2, '0');
+            document.getElementById("m").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("s").innerText = String(seconds).padStart(2, '0');
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
+"""
+
+components.html(RELOJ_HTML, height=132)
+
+# -----------------------------------------------------------------------------
+# BARRA DE NAVEGACIÓN TÁCTIL
+# -----------------------------------------------------------------------------
+seccion = st.radio(
+    "Navegación",
+    ["🏆 Nacional Nov", "📅 Calendario 2027", "📝 Inscribirse"],
+    horizontal=True,
+    label_visibility="collapsed"
+)
+
+# =============================================================================
+# VISTA 1: TORNEO NACIONAL POR CATEGORÍAS (27 AL 29 NOV)
+# =============================================================================
+if seccion == "🏆 Nacional Nov":
+    st.markdown(
+        """
+        <div class="mobile-card" style="border-left: 5px solid #F5C518;">
+            <span style="background:#F5C518; color:#090B0F; font-weight:800; padding:3px 10px; border-radius:6px; font-size:0.75rem;">
+                27 AL 29 DE NOVIEMBRE • FIDE
+            </span>
+            <h2 style="font-size: 1.75rem; margin: 8px 0 6px 0; color: #FFFFFF;">
+                TORNEO NACIONAL POR CATEGORÍAS
+            </h2>
+            <div style="color: #CBD5E1; font-size: 0.9rem; line-height: 1.5;">
+                📍 <strong>Sede:</strong> Escuela Nacional de Talento Kendry Morón, Santo Domingo.<br>
+                ⏱️ <strong>Ritmo:</strong> 1 hora 30 min + 30 seg de incremento.<br>
+                ♟️ <strong>Sistema:</strong> Suizo a 5 Rondas.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns(2, gap="medium")
+
+    with col1:
+        st.markdown("#### 🎯 Categorías Juveniles")
+        st.markdown(
+            """
+            <div class="cat-row"><div class="cat-name">♟️ SUB <span>17</span></div><div class="cat-tag">ABSOLUTO Y FEMENINO</div></div>
+            <div class="cat-row"><div class="cat-name">♞ SUB <span>15</span></div><div class="cat-tag">ABSOLUTO</div></div>
+            <div class="cat-row"><div class="cat-name">♝ SUB <span>13</span></div><div class="cat-tag">ABSOLUTO</div></div>
+            <div class="cat-row"><div class="cat-name">♜ SUB <span>11</span></div><div class="cat-tag">ABSOLUTO</div></div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.markdown("#### 🏅 Premiación Oficial")
+        st.markdown(
+            """
+            <div class="prize-item prize-gold">
+                <div style="font-weight: 800; color: #F5C518; font-size: 1rem;">🥇 1ER LUGAR: Trofeo + Viaje</div>
+                <div style="color: #E2E8F0; font-size: 0.85rem; margin-top: 3px;">
+                    Boletos aéreos ida y vuelta a los <strong>XXIII Juegos Centroamericanos y del Caribe de la Juventud 2027</strong>.
+                </div>
+            </div>
+            <div class="prize-item">
+                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥈 2DO LUGAR: Medalla + Tablero Staunton</div>
+                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas Staunton.</div>
+            </div>
+            <div class="prize-item">
+                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥉 3ER LUGAR: Medalla + Tablero DGT</div>
+                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas DGT.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.info("🎓 **Entrenamiento continuo** incluido para todos los primeros lugares con miras al Centroamericano.")
+
+# =============================================================================
+# VISTA 2: CALENDARIO DE TORNEOS 2027
+# =============================================================================
+elif seccion == "📅 Calendario 2027":
+    st.markdown("#### 📅 Temporada Oficial 2027 (Enero – Junio)")
+    
+    mes_filtro = st.selectbox(
+        "Filtrar por mes:",
+        ["Todos los meses", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO"],
+        label_visibility="collapsed"
+    )
+
+    filtrados = [t for t in TORNEOS_2027 if mes_filtro == "Todos los meses" or t["mes"] == mes_filtro]
+
+    for idx, ev in enumerate(filtrados):
+        st.markdown(
+            f"""
+            <div class="mobile-card" style="border-left: 4px solid #C8102E;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="background:#C8102E; color:#FFF; font-weight:800; font-size:0.75rem; padding:3px 10px; border-radius:6px;">
+                        {ev['mes']} 2027
+                    </span>
+                    <span style="font-size: 1.3rem;">{ev['icono']}</span>
+                </div>
+                <div style="color: #F5C518; font-weight: 700; font-size: 0.88rem; margin-top: 8px;">
+                    🗓️ {ev['fechas']}
+                </div>
+                <div style="font-family: 'Oswald', sans-serif; font-size: 1.35rem; color: #FFFFFF; margin: 2px 0;">
+                    {ev['titulo']}
+                </div>
+                <div style="color: #FF6B81; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">
+                    {ev['modalidad']}
+                </div>
+                <div style="color: #94A3B8; font-size: 0.85rem; margin-top: 4px;">
+                    {ev['detalle']}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.download_button(
+            label=f"➕ Guardar '{ev['titulo']}' en mi Calendario",
+            data=generar_ics(ev["titulo"], ev["fecha_ics"], ev["detalle"]),
+            file_name=f"torneo_{ev['mes'].lower()}_{idx}.ics",
+            mime="text/calendar",
+            key=f"btn_ics_{idx}",
+            use_container_width=True
+        )
+        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+
+# =============================================================================
+# VISTA 3: FORMULARIO DE INSCRIPCIÓN RÁPIDA
+# =============================================================================
+elif seccion == "📝 Inscribirse":
+    st.markdown("#### 📝 Pre-Inscripción Rápida desde el Celular")
+    st.caption("Completa los datos y envíalos en un toque al WhatsApp oficial del torneo.")
+
+    with st.form("form_movil"):
+        nombre = st.text_input("Nombre Completo del Jugador *", placeholder="Ej. Ángel Sebastián Lara")
+        lista_torneos = ["Torneo Nacional por Categorías (27-29 Nov)"] + [
+            f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027
+        ]
+        torneo = st.selectbox("Torneo *", lista_torneos)
+        categoria = st.selectbox(
+            "Categoría *",
+            ["Sub-17 Absoluto", "Sub-17 Femenino", "Sub-15 Absoluto", "Sub-13 Absoluto", "Sub-11 Absoluto", "Abierto / Libre"]
+        )
+        telefono = st.text_input("WhatsApp de Contacto *", placeholder="Ej. 809-555-0199")
+        id_fide = st.text_input("ID FIDE (Opcional)", placeholder="Si no tiene, dejar en blanco")
+
+        submit = st.form_submit_button("✅ PREPARAR INSCRIPCIÓN", use_container_width=True)
+
+    if submit:
+        if not nombre or not telefono:
+            st.error("⚠️ Escribe el nombre del jugador y un número de contacto.")
+        else:
+            fide_texto = id_fide if id_fide else "N/A"
+            texto_wa = (
+                f"*INSCRIPCIÓN ESCUELA KENDRY MORÓN*%0A"
+                f"• *Jugador:* {urllib.parse.quote(nombre)}%0A"
+                f"• *Torneo:* {urllib.parse.quote(torneo)}%0A"
+                f"• *Categoría:* {urllib.parse.quote(categoria)}%0A"
+                f"• *ID FIDE:* {urllib.parse.quote(fide_texto)}%0A"
+                f"• *Tel:* {urllib.parse.quote(telefono)}"
+            )
+            st.success("✅ ¡Listo! Pulsa el botón abajo para enviar tu ficha:")
+            st.link_button(
+                "📲 ENVIAR POR WHATSAPP AL CM MICHEL DE JESÚS",
+                f"https://wa.me/18297732231?text={texto_wa}",
+                use_container_width=True
+            )
+
+# -----------------------------------------------------------------------------
+# BARRA FLOTANTE INFERIOR PERSISTENTE
+# -----------------------------------------------------------------------------
+msg_directo = urllib.parse.quote("Hola CM Michel de Jesús, quiero información e inscribirme en los torneos de la Escuela Kendry Morón.")
+st.markdown(
+    f"""
+    <div class="sticky-bottom-bar">
+        <a href="https://wa.me/18297732231?text={msg_directo}" target="_blank" class="sticky-wa-btn">
+            📲 INSCRIPCIÓN DIRECTA • CM MICHEL (829.773.2231)
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
