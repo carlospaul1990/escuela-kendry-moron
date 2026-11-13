@@ -47,7 +47,7 @@ def get_logo_html():
     """
 
 # -----------------------------------------------------------------------------
-# CSS RESPONSIVO (NAVEGACIÓN DE ALTO CONTRASTE + DISEÑO MÓVIL)
+# CSS RESPONSIVO + ESTILIZACIÓN PROFESIONAL DEL FORMULARIO DARK MODE
 # -----------------------------------------------------------------------------
 CSS_ESTILOS = """
 <style>
@@ -189,6 +189,94 @@ div.stButton > button[kind="primary"] {
     box-shadow: 0 0 22px rgba(200, 16, 46, 0.65) !important;
 }
 
+/* ==========================================================================
+   ESTILOS DEL FORMULARIO DE INSCRIPCIÓN (DARK MODE ÉLITE + ALTO CONTRASTE)
+   ========================================================================== */
+[data-testid="stForm"] {
+    background: linear-gradient(180deg, #131722 0%, #0E1119 100%) !important;
+    border: 1px solid rgba(200, 16, 46, 0.45) !important;
+    border-top: 4px solid #C8102E !important;
+    border-radius: 18px !important;
+    padding: 1.6rem !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Etiquetas de los inputs (100% visibles en blanco) */
+[data-testid="stForm"] label,
+[data-testid="stForm"] label p,
+[data-testid="stSelectbox"] label p,
+[data-testid="stTextInput"] label p {
+    color: #F8FAFC !important;
+    font-weight: 700 !important;
+    font-size: 0.92rem !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 4px !important;
+}
+
+/* Cajas de texto y desplegables en modo oscuro elegante */
+div[data-baseweb="input"] > div,
+div[data-baseweb="select"] > div {
+    background-color: #090B0F !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 12px !important;
+    color: #FFFFFF !important;
+    min-height: 46px !important;
+    transition: border-color 0.2s ease !important;
+}
+
+div[data-baseweb="input"] > div:focus-within,
+div[data-baseweb="select"] > div:focus-within {
+    border-color: #F5C518 !important;
+    box-shadow: 0 0 0 2px rgba(245, 197, 24, 0.2) !important;
+}
+
+div[data-baseweb="input"] input {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-weight: 500 !important;
+}
+
+div[data-baseweb="input"] input::placeholder {
+    color: #64748B !important;
+    -webkit-text-fill-color: #64748B !important;
+}
+
+div[data-baseweb="select"] span,
+div[data-baseweb="select"] div {
+    color: #FFFFFF !important;
+}
+
+/* Botón Submit del Formulario (Rojo Carmesí + Borde Dorado + Texto Blanco) */
+[data-testid="stFormSubmitButton"] button {
+    background: linear-gradient(135deg, #E01133 0%, #9E0B22 100%) !important;
+    color: #FFFFFF !important;
+    border: 2px solid #F5C518 !important;
+    border-radius: 12px !important;
+    padding: 0.9rem 1.2rem !important;
+    margin-top: 0.6rem !important;
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 8px 24px rgba(200, 16, 46, 0.5) !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stFormSubmitButton"] button p {
+    color: #FFFFFF !important;
+    font-family: 'Oswald', sans-serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+}
+
+[data-testid="stFormSubmitButton"] button:hover {
+    background: linear-gradient(135deg, #FF173D 0%, #B80D29 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(245, 197, 24, 0.35) !important;
+}
+
+/* TARJETAS DE CONTENIDO */
 .mobile-card {
     background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.08);
@@ -294,6 +382,9 @@ div.stButton > button[kind="primary"] {
     div.stButton > button[kind="primary"] {
         font-size: 1.05rem !important;
         padding: 0.8rem 0.6rem !important;
+    }
+    [data-testid="stForm"] {
+        padding: 1.1rem !important;
     }
 }
 </style>
@@ -657,45 +748,98 @@ elif st.session_state.vista_actual == "calendario":
         st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
 
 # =============================================================================
-# VISTA 3: FORMULARIO DE INSCRIPCIÓN RÁPIDA
+# VISTA 3: FORMULARIO DE INSCRIPCIÓN OFICIAL (DARK MODE ÉLITE)
 # =============================================================================
 elif st.session_state.vista_actual == "inscripcion":
-    st.markdown("#### 📝 Pre-Inscripción Rápida desde el Celular")
-    st.caption("Completa los datos y envíalos en un toque al WhatsApp oficial del torneo.")
+    st.markdown(
+        """
+        <div class="mobile-card" style="border-left: 5px solid #C8102E; margin-bottom: 14px;">
+            <span style="background: rgba(200,16,46,0.25); border: 1px solid #C8102E; color: #FF6B81; font-weight: 800; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem;">
+                REGISTRO OFICIAL DE ATLETAS
+            </span>
+            <h2 style="font-size: 1.7rem; margin: 8px 0 4px 0; color: #FFFFFF;">
+                📝 PRE-INSCRIPCIÓN EN LÍNEA
+            </h2>
+            <p style="color: #CBD5E1; font-size: 0.88rem; margin: 0;">
+                Completa los datos del jugador para generar su ficha oficial y enviarla en un toque al WhatsApp de coordinación (<strong>CM Michel de Jesús</strong>).
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     with st.form("form_movil"):
-        nombre = st.text_input("Nombre Completo del Jugador *", placeholder="Ej. Ángel Sebastián Lara")
-        lista_torneos = ["Torneo Nacional por Categorías (27-29 Nov)"] + [
-            f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027
-        ]
-        torneo = st.selectbox("Torneo *", lista_torneos)
-        categoria = st.selectbox(
-            "Categoría *",
-            ["Sub-17 Absoluto", "Sub-17 Femenino", "Sub-15 Absoluto", "Sub-13 Absoluto", "Sub-11 Absoluto", "Abierto / Libre"]
-        )
-        telefono = st.text_input("WhatsApp de Contacto *", placeholder="Ej. 809-555-0199")
-        id_fide = st.text_input("ID FIDE (Opcional)", placeholder="Si no tiene, dejar en blanco")
+        f_col1, f_col2 = st.columns(2, gap="medium")
 
-        submit = st.form_submit_button("✅ PREPARAR INSCRIPCIÓN", use_container_width=True)
+        with f_col1:
+            nombre = st.text_input(
+                "👤 Nombre Completo del Jugador *",
+                placeholder="Ej. Ángel Sebastián Lara"
+            )
+            lista_torneos = ["Torneo Nacional por Categorías (27-29 Nov)"] + [
+                f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027
+            ]
+            torneo = st.selectbox("🏆 Torneo a Participar *", lista_torneos)
+            categoria = st.selectbox(
+                "🎯 Categoría / Rama *",
+                [
+                    "Sub-17 Absoluto",
+                    "Sub-17 Femenino",
+                    "Sub-15 Absoluto",
+                    "Sub-13 Absoluto",
+                    "Sub-11 Absoluto",
+                    "Abierto / Libre"
+                ]
+            )
+
+        with f_col2:
+            telefono = st.text_input(
+                "📱 Teléfono / WhatsApp de Contacto *",
+                placeholder="Ej. 809-555-0199"
+            )
+            id_fide = st.text_input(
+                "🌐 ID FIDE (Opcional)",
+                placeholder="Ej. 6401234 (Dejar vacío si no posee)"
+            )
+            club_escuela = st.text_input(
+                "♟️ Club / Academia / Provincia (Opcional)",
+                placeholder="Ej. Escuela Kendry Morón / Santo Domingo"
+            )
+
+        submit = st.form_submit_button("✅ GENERAR FICHA DE INSCRIPCIÓN", use_container_width=True)
 
     if submit:
         if not nombre or not telefono:
-            st.error("⚠️ Escribe el nombre del jugador y un número de contacto.")
+            st.error("⚠️ Por favor escribe el nombre completo del jugador y un teléfono de contacto.")
         else:
-            fide_texto = id_fide if id_fide else "N/A"
+            fide_texto = id_fide if id_fide else "Sin ID FIDE"
+            club_texto = club_escuela if club_escuela else "No especificado"
             texto_wa = (
-                f"*INSCRIPCIÓN ESCUELA KENDRY MORÓN*%0A"
+                f"*FICHA DE INSCRIPCIÓN - ESCUELA KENDRY MORÓN*%0A"
                 f"• *Jugador:* {urllib.parse.quote(nombre)}%0A"
                 f"• *Torneo:* {urllib.parse.quote(torneo)}%0A"
                 f"• *Categoría:* {urllib.parse.quote(categoria)}%0A"
                 f"• *ID FIDE:* {urllib.parse.quote(fide_texto)}%0A"
-                f"• *Tel:* {urllib.parse.quote(telefono)}"
+                f"• *Club/Prov:* {urllib.parse.quote(club_texto)}%0A"
+                f"• *Contacto:* {urllib.parse.quote(telefono)}"
             )
-            st.success("✅ ¡Listo! Pulsa el botón abajo para enviar tu ficha:")
-            st.link_button(
-                "📲 ENVIAR POR WHATSAPP AL CM MICHEL DE JESÚS",
-                f"https://wa.me/18297732231?text={texto_wa}",
-                use_container_width=True
+            st.markdown(
+                f"""
+                <div style="background: rgba(16, 185, 129, 0.14); border: 1.5px solid #10B981; border-radius: 14px; padding: 14px; margin-top: 12px; margin-bottom: 12px;">
+                    <div style="color: #34D399; font-weight: 800; font-size: 1rem;">✅ ¡FICHA GENERADA PARA {nombre.upper()}!</div>
+                    <div style="color: #E2E8F0; font-size: 0.86rem; margin-top: 4px;">
+                        Pulsa el botón dorado de abajo para enviar los datos directamente por WhatsApp al <strong>CM Michel de Jesús (829.773.2231)</strong>.
+                    </div>
+                </div>
+                <a href="https://wa.me/18297732231?text={texto_wa}" target="_blank"
+                   style="display: block; width: 100%; text-align: center; background: #F5C518; color: #090B0F !important;
+                          font-family: 'Oswald', sans-serif; font-size: 1.25rem; font-weight: 700; padding: 14px 20px;
+                          border-radius: 12px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.8px;
+                          box-shadow: 0 8px 25px rgba(245, 197, 24, 0.4);">
+                    📲 ENVIAR INSCRIPCIÓN POR WHATSAPP AHORA
+                </a>
+                """,
+                unsafe_allow_html=True
             )
 
 # -----------------------------------------------------------------------------
