@@ -84,7 +84,6 @@ h1, h2, h3, .oswald {
     text-transform: uppercase;
 }
 
-/* HERO SECTION */
 .hero-card {
     background: linear-gradient(160deg, #161B26 0%, #1F0B11 55%, #0D1017 100%);
     border: 1px solid rgba(200, 16, 46, 0.5);
@@ -144,9 +143,6 @@ h1, h2, h3, .oswald {
     margin-top: 6px;
 }
 
-/* ==========================================================================
-   BARRA DE NAVEGACIÓN PRINCIPAL (ALTO CONTRASTE Y PROTAGONISMO)
-   ========================================================================== */
 .nav-header-label {
     text-align: center;
     font-size: 0.75rem;
@@ -157,7 +153,6 @@ h1, h2, h3, .oswald {
     margin: 0.4rem 0 0.5rem 0;
 }
 
-/* Botón Inactivo (Fondo claro/contrastado, borde dorado/blanco, texto 100% legible) */
 div.stButton > button[kind="secondary"] {
     background: #1A202E !important;
     color: #FFFFFF !important;
@@ -180,7 +175,6 @@ div.stButton > button[kind="secondary"]:hover {
     transform: translateY(-2px);
 }
 
-/* Botón Activo (Rojo Carmesí Intenso con borde Dorado brillante) */
 div.stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #E01133 0%, #A30B24 100%) !important;
     color: #FFFFFF !important;
@@ -195,7 +189,6 @@ div.stButton > button[kind="primary"] {
     box-shadow: 0 0 22px rgba(200, 16, 46, 0.65) !important;
 }
 
-/* TARJETAS DE CONTENIDO */
 .mobile-card {
     background: var(--bg-card);
     border: 1px solid rgba(255,255,255,0.08);
@@ -583,3 +576,139 @@ if st.session_state.vista_actual == "nacional":
             <div class="cat-row"><div class="cat-name">♟️ SUB <span>17</span></div><div class="cat-tag">ABSOLUTO Y FEMENINO</div></div>
             <div class="cat-row"><div class="cat-name">♞ SUB <span>15</span></div><div class="cat-tag">ABSOLUTO</div></div>
             <div class="cat-row"><div class="cat-name">♝ SUB <span>13</span></div><div class="cat-tag">ABSOLUTO</div></div>
+            <div class="cat-row"><div class="cat-name">♜ SUB <span>11</span></div><div class="cat-tag">ABSOLUTO</div></div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.markdown("#### 🏅 Premiación Oficial")
+        st.markdown(
+            """
+            <div class="prize-item prize-gold">
+                <div style="font-weight: 800; color: #F5C518; font-size: 1rem;">🥇 1ER LUGAR: Trofeo + Viaje</div>
+                <div style="color: #E2E8F0; font-size: 0.85rem; margin-top: 3px;">
+                    Boletos aéreos ida y vuelta a los <strong>XXIII Juegos Centroamericanos y del Caribe de la Juventud 2027</strong>.
+                </div>
+            </div>
+            <div class="prize-item">
+                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥈 2DO LUGAR: Medalla + Tablero Staunton</div>
+                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas Staunton.</div>
+            </div>
+            <div class="prize-item">
+                <div style="font-weight: 800; color: #FFFFFF; font-size: 0.95rem;">🥉 3ER LUGAR: Medalla + Tablero DGT</div>
+                <div style="color: #94A3B8; font-size: 0.83rem;">Tablero de madera preciosa con piezas DGT.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.info("🎓 **Entrenamiento continuo** incluido para todos los primeros lugares con miras al Centroamericano.")
+
+# =============================================================================
+# VISTA 2: CALENDARIO DE TORNEOS 2027
+# =============================================================================
+elif st.session_state.vista_actual == "calendario":
+    st.markdown("#### 📅 Temporada Oficial 2027 (Enero – Junio)")
+    
+    mes_filtro = st.selectbox(
+        "Filtrar por mes:",
+        ["Todos los meses", "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO"],
+        label_visibility="collapsed"
+    )
+
+    filtrados = [t for t in TORNEOS_2027 if mes_filtro == "Todos los meses" or t["mes"] == mes_filtro]
+
+    for idx, ev in enumerate(filtrados):
+        st.markdown(
+            f"""
+            <div class="mobile-card" style="border-left: 4px solid #C8102E;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="background:#C8102E; color:#FFF; font-weight:800; font-size:0.75rem; padding:3px 10px; border-radius:6px;">
+                        {ev['mes']} 2027
+                    </span>
+                    <span style="font-size: 1.3rem;">{ev['icono']}</span>
+                </div>
+                <div style="color: #F5C518; font-weight: 700; font-size: 0.88rem; margin-top: 8px;">
+                    🗓️ {ev['fechas']}
+                </div>
+                <div style="font-family: 'Oswald', sans-serif; font-size: 1.35rem; color: #FFFFFF; margin: 2px 0;">
+                    {ev['titulo']}
+                </div>
+                <div style="color: #FF6B81; font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">
+                    {ev['modalidad']}
+                </div>
+                <div style="color: #94A3B8; font-size: 0.85rem; margin-top: 4px;">
+                    {ev['detalle']}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.download_button(
+            label=f"➕ Guardar '{ev['titulo']}' en mi Calendario",
+            data=generar_ics(ev["titulo"], ev["fecha_ics"], ev["detalle"]),
+            file_name=f"torneo_{ev['mes'].lower()}_{idx}.ics",
+            mime="text/calendar",
+            key=f"btn_ics_{idx}",
+            use_container_width=True
+        )
+        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+
+# =============================================================================
+# VISTA 3: FORMULARIO DE INSCRIPCIÓN RÁPIDA
+# =============================================================================
+elif st.session_state.vista_actual == "inscripcion":
+    st.markdown("#### 📝 Pre-Inscripción Rápida desde el Celular")
+    st.caption("Completa los datos y envíalos en un toque al WhatsApp oficial del torneo.")
+
+    with st.form("form_movil"):
+        nombre = st.text_input("Nombre Completo del Jugador *", placeholder="Ej. Ángel Sebastián Lara")
+        lista_torneos = ["Torneo Nacional por Categorías (27-29 Nov)"] + [
+            f"{t['titulo']} ({t['mes']} 2027)" for t in TORNEOS_2027
+        ]
+        torneo = st.selectbox("Torneo *", lista_torneos)
+        categoria = st.selectbox(
+            "Categoría *",
+            ["Sub-17 Absoluto", "Sub-17 Femenino", "Sub-15 Absoluto", "Sub-13 Absoluto", "Sub-11 Absoluto", "Abierto / Libre"]
+        )
+        telefono = st.text_input("WhatsApp de Contacto *", placeholder="Ej. 809-555-0199")
+        id_fide = st.text_input("ID FIDE (Opcional)", placeholder="Si no tiene, dejar en blanco")
+
+        submit = st.form_submit_button("✅ PREPARAR INSCRIPCIÓN", use_container_width=True)
+
+    if submit:
+        if not nombre or not telefono:
+            st.error("⚠️ Escribe el nombre del jugador y un número de contacto.")
+        else:
+            fide_texto = id_fide if id_fide else "N/A"
+            texto_wa = (
+                f"*INSCRIPCIÓN ESCUELA KENDRY MORÓN*%0A"
+                f"• *Jugador:* {urllib.parse.quote(nombre)}%0A"
+                f"• *Torneo:* {urllib.parse.quote(torneo)}%0A"
+                f"• *Categoría:* {urllib.parse.quote(categoria)}%0A"
+                f"• *ID FIDE:* {urllib.parse.quote(fide_texto)}%0A"
+                f"• *Tel:* {urllib.parse.quote(telefono)}"
+            )
+            st.success("✅ ¡Listo! Pulsa el botón abajo para enviar tu ficha:")
+            st.link_button(
+                "📲 ENVIAR POR WHATSAPP AL CM MICHEL DE JESÚS",
+                f"https://wa.me/18297732231?text={texto_wa}",
+                use_container_width=True
+            )
+
+# -----------------------------------------------------------------------------
+# BARRA FLOTANTE INFERIOR PERSISTENTE
+# -----------------------------------------------------------------------------
+msg_directo = urllib.parse.quote("Hola CM Michel de Jesús, quiero información e inscribirme en los torneos de la Escuela Kendry Morón.")
+st.markdown(
+    f"""
+    <div class="sticky-bottom-bar">
+        <a href="https://wa.me/18297732231?text={msg_directo}" target="_blank" class="sticky-wa-btn">
+            📲 INSCRIPCIÓN DIRECTA • CM MICHEL (829.773.2231)
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
